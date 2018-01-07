@@ -9,17 +9,18 @@ public class Shingle {
 	private int shingleSize;
 	private List<String> shingleList;
 	
+	// constructor without a given shingle size
 	public Shingle(int documentID, String[] words) {
 		this.documentID = documentID;
 		this.shingleSize = DEFAULT_SHINGLE_SIZE;
-		getShingle(words);
+		this.shingleList = getShingle(words);
 	}
 
 	// Shingles: the basic unit (element) is a fixed-size group of words
 	public Shingle(int documentID, int shingleSize, String[] words) {	
 		this.documentID = documentID;
 		this.shingleSize = shingleSize;
-		getShingle(words);
+		this.shingleList = getShingle(words);
 	}
 			
 	public List<String> getShingle(String[] words) {

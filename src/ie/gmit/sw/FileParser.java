@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public class FileParser implements Runnable {
-	//private static final String REGEX = "\\s+";
     private final int shingleSize = 5;
     private int documentID;
 	private List<String> shingles;
@@ -36,8 +35,11 @@ public class FileParser implements Runnable {
 				String[] words = line.split("\\W*\\s+");
 				//System.out.println("line: "+line);			
 				Shingle shingle = new Shingle(documentID, shingleSize, words);
-				//System.out.println("T ID "+Thread.currentThread().getName()+" shingle: "+shingle.toString());
+				System.out.println("T ID "+Thread.currentThread().getName()+" shingle: "+shingle.toString());
+				//shingle.getShingle(words);
+				// add shingle to the blocking queue
 				blockingQueue.put(shingle);
+				// update document id
 				documentID++;			
 			}			
 		}

@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 
 public class MinHash implements Runnable {
 	private BlockingQueue<Shingle> blockingQueue;
-    private final int poisonPill;
+    //private final int poisonPill;
     private Executor pool;
 
 	

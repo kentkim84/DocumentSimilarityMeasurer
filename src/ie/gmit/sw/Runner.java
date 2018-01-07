@@ -16,7 +16,7 @@ public class Runner {
 		BlockingQueue<Shingle> blockingQueue = new LinkedBlockingQueue<>(BOUND);
 
 		new Thread(new FileParser(blockingQueue, fileName1, poisonPill, poisonPillPerProducer), "T1").start();
-		new Thread(new FileParser(blockingQueue, fileName2, poisonPill, poisonPillPerProducer), "T2").start();
+		//new Thread(new FileParser(blockingQueue, fileName2, poisonPill, poisonPillPerProducer), "T2").start();
 		
 		
 		/*for (int j = 0; j < N_CONSUMERS; j++) {
