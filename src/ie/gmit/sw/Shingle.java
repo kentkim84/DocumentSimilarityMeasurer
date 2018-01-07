@@ -10,20 +10,18 @@ public class Shingle {
 	private List<String> shingleList;
 	
 	// constructor without a given shingle size
-	public Shingle(int documentID, String[] words) {
+	public Shingle(int documentID) {
 		this.documentID = documentID;
-		this.shingleSize = DEFAULT_SHINGLE_SIZE;
-		this.shingleList = getShingle(words);
+		this.shingleSize = DEFAULT_SHINGLE_SIZE;		
 	}
 
 	// Shingles: the basic unit (element) is a fixed-size group of words
-	public Shingle(int documentID, int shingleSize, String[] words) {	
+	public Shingle(int documentID, int shingleSize) {	
 		this.documentID = documentID;
-		this.shingleSize = shingleSize;
-		this.shingleList = getShingle(words);
+		this.shingleSize = shingleSize;		
 	}
 			
-	public List<String> getShingle(String[] words) {
+	public List<String> genShingle(String[] words) {
 		shingleList = new LinkedList<>();
 		int shinglesNumber = words.length - shingleSize;          
         //Create all shingles 
@@ -36,6 +34,22 @@ public class Shingle {
             shingleList.add(shingle); 
         }			
 		return shingleList;
+	}
+			
+	public List<String> getShingleList() {
+		return shingleList;
+	}
+
+	public void setShingleList(List<String> shingleList) {
+		this.shingleList = shingleList;
+	}
+
+	public int getDocumentID() {
+		return documentID;
+	}
+
+	public void setDocumentID(int documentID) {
+		this.documentID = documentID;
 	}
 
 	@Override
