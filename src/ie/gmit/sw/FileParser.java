@@ -2,9 +2,8 @@ package ie.gmit.sw;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public class FileParser implements Runnable {
@@ -13,22 +12,23 @@ public class FileParser implements Runnable {
 	//private List<String> shingles;
 	private BlockingQueue<Shingle> blockingQueue;
 	private String fileName;
-	private int poisonPill;
-	private int poisonPillPerProducer;
-
+	
+	private long start_time;
+	private long end_time;
+	private long duration;
+	
 	// constructor with parameters then calls run method
-	public FileParser(BlockingQueue<Shingle> blockingQueue, String fileName, int poisonPill, int poisonPillPerProducer) {		
+	public FileParser(BlockingQueue<Shingle> blockingQueue, String fileName) {		
 		this.blockingQueue = blockingQueue;
 		this.fileName = fileName;
-		this.poisonPill = poisonPill;
-		this.poisonPillPerProducer = poisonPillPerProducer;
 	}
 	
-	public void parse() throws Exception {
+	public void parse() throws IOException, InterruptedException {		
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
 		//shingles = new LinkedList<>();
 		String line = null;
 		documentID = 0;
+		start_time = System.currentTimeMillis();
 		while ((line = br.readLine()) != null) {
 			// skip the line without anything
 			if(line.length() > 0) {
@@ -45,11 +45,18 @@ public class FileParser implements Runnable {
 			}			
 		}
 		br.close();
+		
+		// add a poison shingle to stop
+		Shingle poison = new Shingle(-1);
+		blockingQueue.put(poison);
+		end_time = System.currentTimeMillis();
+		duration = (end_time - start_time); // catch the duration of reading process
+		System.out.println("Parsing Done: " + duration + " milliseconds");
 	}
 
 	public void run() {		
 		try {
-			parse();			
+			parse();
 		} catch (Exception e) { 
 			e.printStackTrace();
 		}
