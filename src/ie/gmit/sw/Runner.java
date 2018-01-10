@@ -20,24 +20,12 @@ public class Runner {
 		String fileName1 = "DeBelloGallico.txt";
 		String fileName2 = "WarAndPeace.txt";
 		//int BOUND = 10;
-		
-		Random r = new Random(11);
-		for (int i = 0; i < 10; i++){
-			int a = (int)r.nextInt();
-			int b = (int)r.nextInt();
-			int c = (int)r.nextInt();
-			System.out.println(a+" "+b+" "+c);
-		}
-		
 
 		BlockingQueue<Shingle> blockingQueue = new LinkedBlockingQueue<>();
-		Set<Integer> set1 = new TreeSet<Integer>();
-		Set<Integer> set2 = new TreeSet<Integer>();
-
 		new Thread(new FileParser(blockingQueue, fileName1), "TF1").start();
 		new Thread(new FileParser(blockingQueue, fileName2), "TF2").start();
 		
-		new Thread(new Manager(blockingQueue, set1, set2), "TW1").start();		
+		new Thread(new Manager(blockingQueue), "TW1").start();		
 
 	}
 }

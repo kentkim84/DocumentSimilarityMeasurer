@@ -9,80 +9,104 @@ import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
-public class MinHash implements Callable<Map<Integer, List<Integer>>> {
-	private Shingle shingle;
-	private List<Integer> hasheList;
+public class MinHash implements Runnable {	
+	private int setIndex;
+	private int numHashes;
+	private int hash;
+	private int min;
+	private List<Integer> hashList;
 	private List<String> shingleList;
+	// @param Integer: document id
+	// @param Set<Integer>: hashes 
 	private Map<Integer, List<Integer>> map;
-	private int numPermutations;
 	private int numTerms;
 	private int mod;
 	private long start_time;
 	private long end_time;
 	private long duration;	
 
-	public MinHash(Shingle shingle, Map<Integer, List<Integer>> map, int numPermutations) {		
-		this.shingle = shingle;
-		this.map = map;
-		this.numPermutations = numPermutations;
+	public MinHash(int setIndex, List<String> shingleList, int numHashes) {				
+		this.setIndex = setIndex;
+		this.shingleList = shingleList;
+		this.numHashes = numHashes;
 	}
+	
+	/*public MinHash(int setIndex, List<String> shingleList, int numHashes) {				
+		this.setIndex = setIndex;
+		this.shingleList = shingleList;
+		this.numHashes = numHashes;
+	}*/
 
-	public void init() {
-		// the total number of unique terms in the collection of documents
-		shingleList = shingle.getShingleList();
-		numTerms = shingleList.size();
-		mod = PrimeFunction.nextPrime(numTerms);
-
-		/*// generates k-random hash functions.  k is equal to the number of permutations.
+	public void run() {
+		// loop over the number of permutations times
+		// Threadpool gives each job to the n-number of worker threads
+		// create 200 MinHash set 1 and 2
+		List<Integer> hashes = new ArrayList<Integer>();
 		Random r = new Random();
-		hasheList = new ArrayList<Integer>();
-
-		this.numHash = numHash;
-
-		Random r = new Random(11);
-		for (int i = 0; i < numHash; i++){
-			int a = (int)r.nextInt();
-			int b = (int)r.nextInt();
-			int c = (int)r.nextInt();
-			int x = hash(a*b*c, a, b, c);
-			hash[i] = x;
-		}*/
-	}
-
-	public Map<Integer, List<Integer>> call() throws Exception {
-
-		//System.out.println("docID: "+shingle.getDocumentID()+" "+shingleList);
-
-		start_time = System.currentTimeMillis();		
-		for (int i = 0; i < numPermutations; i++){
-			//hasheList.add(r.nextInt());
-
-			/*hashVal = word2int(words[j], AB.get(i).a, AB.get(i).b, mod);
-			if(hashVal < minHashVals[i]) minHashVals[i] = hashVal;*/
+		start_time = System.currentTimeMillis();
+		for (int i = 0; i < numHashes; i++) {
+			hashes.add(r.nextInt());				
 		}
-		//XOR the integer word values with the hashes
-		/*for (Integer hash : hashes){
-					int min = Integer.MAX_VALUE;
-					for (String word : shingle.getShingleList()) {
-						int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
-						if (minHash < min) min = minHash;
-					}
-					hashes.add(min); //Only store the shingle with the minimum hash for each hash function
-				}*/
-
-
-
-
-
-		//System.out.println("id: " + shingle.getDocumentID());
-		//System.out.println("sh: "+shingle.getShingleList());
-		int i = 0;
-		for (String sh : shingle.getShingleList()) {
-			//System.out.println(++i + " : " + sh);
-		}	
 		end_time = System.currentTimeMillis();
 		duration = (end_time - start_time); // catch the duration of reading process
-		//System.out.println("MinHashing Done: " + duration + " milliseconds");
-		return map;
+		System.out.println("Hashing Done: " + duration + " milliseconds");
+		start_time = System.currentTimeMillis();
+		for (Integer hash : hashes){
+			int min = Integer.MAX_VALUE;
+			start_time = System.currentTimeMillis();
+			for (String word : shingleList){
+				int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
+				if (minHash < min) {
+					min = minHash;
+				}
+			}
+			end_time = System.currentTimeMillis();
+			duration = (end_time - start_time); // catch the duration of reading process
+			//System.out.println("Word hashing Done: " + duration + " milliseconds");
+			hashList.add(min); //Only store the shingle with the minimum hash for each hash function
+			//executorService.execute(new MinHash(0, buffer1, buffer1.size()+buffer2.size()));
+			//executorService.execute(new MinHash(1, buffer2, buffer1.size()+buffer2.size()));
+		}
+		System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
+		end_time = System.currentTimeMillis();
+		duration = (end_time - start_time); // catch the duration of reading process
+		System.out.println("MinHashing Done: " + duration + " milliseconds");
 	}
+	
+	/*public void run() {
+		// loop over the number of permutations times
+		// Threadpool gives each job to the n-number of worker threads
+		// create 200 MinHash set 1 and 2
+		List<Integer> hashes = new ArrayList<Integer>();
+		Random r = new Random();
+		start_time = System.currentTimeMillis();
+		for (int i = 0; i < numHashes; i++) {
+			hashes.add(r.nextInt());				
+		}
+		end_time = System.currentTimeMillis();
+		duration = (end_time - start_time); // catch the duration of reading process
+		System.out.println("Hashing Done: " + duration + " milliseconds");
+		start_time = System.currentTimeMillis();
+		for (Integer hash : hashes){
+			int min = Integer.MAX_VALUE;
+			start_time = System.currentTimeMillis();
+			for (String word : shingleList){
+				int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
+				if (minHash < min) {
+					min = minHash;
+				}
+			}
+			end_time = System.currentTimeMillis();
+			duration = (end_time - start_time); // catch the duration of reading process
+			//System.out.println("Word hashing Done: " + duration + " milliseconds");
+			hashList.add(min); //Only store the shingle with the minimum hash for each hash function
+			//executorService.execute(new MinHash(0, buffer1, buffer1.size()+buffer2.size()));
+			//executorService.execute(new MinHash(1, buffer2, buffer1.size()+buffer2.size()));
+		}
+		System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
+		end_time = System.currentTimeMillis();
+		duration = (end_time - start_time); // catch the duration of reading process
+		System.out.println("MinHashing Done: " + duration + " milliseconds");
+	}*/
+
 }

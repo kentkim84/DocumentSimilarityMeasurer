@@ -8,6 +8,7 @@ public class Shingle {
 	private int documentID;
 	private int shingleSize;
 	private List<String> shingleList;
+	
 
 	// constructor without a given shingle size
 	public Shingle(int documentID) {
@@ -54,8 +55,6 @@ public class Shingle {
 	public List<String> getShingleList() {
 		return shingleList;
 	}
-
-
 
 	public void setShingleList(List<String> shingleList) {
 		this.shingleList = shingleList;
