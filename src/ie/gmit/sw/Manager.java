@@ -42,7 +42,7 @@ public class Manager implements Runnable {
 			// create a hash map to store document id and hash data
 			map = new HashMap<Integer, List<String>>();
 			// create a fixed size of thread pool with n-number of workers
-			executorService = Executors.newFixedThreadPool(5);
+			executorService = Executors.newFixedThreadPool(100);
 			Future<List<Integer>> future1 = null;
 			Future<List<Integer>> future2= null;
 			//start_time = System.currentTimeMillis();
@@ -70,39 +70,28 @@ public class Manager implements Runnable {
 			//System.out.println("Pre-sorting Done: " + duration + " milliseconds");
 			//System.out.println("buffer 1 size: " + buffer1.size());
 			//System.out.println("buffer 2 size: " + buffer2.size());
-			
-			// loop over the number of permutations times
-			// Threadpool gives each job to the n-number of worker threads
-			// create 200 MinHash set 1 and 2
-			List<Integer> hashes = new ArrayList<Integer>();
-			Random r = new Random();
-			//start_time = System.currentTimeMillis();
-			//int sizeN = buffer1.size()+buffer2.size();
-			int sizeN = 1000;
-			for (int i = 0; i < sizeN; i++) {
-				hashes.add(r.nextInt());				
-			}
-			//end_time = System.currentTimeMillis();
-			//duration = (end_time - start_time); // catch the duration of reading process
-			//System.out.println("Hashing Done: " + duration + " milliseconds");
-			start_time = System.currentTimeMillis();
-			for (Integer hash : hashes){
-				int min = Integer.MAX_VALUE;
+			start_time = System.currentTimeMillis();			
+			for (int i = 0; i < buffer1.size()+buffer2.size(); i++) {
+				/*int min = Integer.MAX_VALUE;
 				//start_time = System.currentTimeMillis();
 				for (String word : buffer1){
-					int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
+					int minHash = word.hashCode(); //Bitwise XOR the string hashCode with the hash
 					if (minHash < min) {
 						min = minHash;
 					}
 				}
-				//end_time = System.currentTimeMillis();
-				//duration = (end_time - start_time); // catch the duration of reading process
-				//System.out.println("Word hashing Done: " + duration + " milliseconds");
-				hashList.add(min); //Only store the shingle with the minimum hash for each hash function
-				//executorService.execute(new MinHash(0, buffer1, buffer1.size()+buffer2.size()));
-				//executorService.execute(new MinHash(1, buffer2, buffer1.size()+buffer2.size()));
+				for (String word : buffer2){
+					int minHash = word.hashCode(); //Bitwise XOR the string hashCode with the hash
+					if (minHash < min) {
+						min = minHash;
+					}
+				}*/
+				
+				executorService.execute(new MinHash(0, buffer1, 2000));
+				executorService.execute(new MinHash(1, buffer2, 2000));
 			}
-			System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
+			executorService.shutdown();
+
 			
 			/*future1 = executorService.submit(new MinHash(0, buffer1));
 			future2 = executorService.submit(new MinHash(1, buffer2));*/
@@ -114,12 +103,27 @@ public class Manager implements Runnable {
 			}*/
 
 			//System.out.println("map size: "+map.size());
-			end_time = System.currentTimeMillis();
-			duration = (end_time - start_time); // catch the duration of reading process
-			System.out.println("MinHashing Done: " + duration + " milliseconds");
+			//end_time = System.currentTimeMillis();
+			//duration = (end_time - start_time); // catch the duration of reading process
+			//System.out.println("MinHashing Done: " + duration + " milliseconds");
 
 			//similarity(Set<T> set1, Set<T> set2);
-			//executorService.shutdown();
+			/*end_time = System.currentTimeMillis();
+			duration = (end_time - start_time); // catch the duration of reading process
+			//System.out.println("Document ID: "+setIndex);
+			//System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
+			System.out.println("MinHashing Done: " + duration + " milliseconds");*/
+			
+			while(executorService.isTerminated() != true) {
+				// await till threadPool is terminated
+			}			
+			if (executorService.isTerminated()) {
+				end_time = System.currentTimeMillis();
+				duration = (end_time - start_time); // catch the duration of reading process
+				//System.out.println("Document ID: "+setIndex);
+				//System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
+				System.out.println("MinHashing Done: " + duration + " milliseconds");
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

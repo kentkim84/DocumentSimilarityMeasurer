@@ -1,0 +1,39 @@
+Hashes size: 461465/nHashList size: 461465
+MinHashing Done: 505468 milliseconds
+
+HashFunction: 2000
+
+non-tp: doc1 and doc2
+12300 milliseconds
+14269 milliseconds
+15776 milliseconds
+13204 milliseconds
+12665 milliseconds
+
+tp(10) = doc1 and doc2
+11190 milliseconds
+11294 milliseconds
+11568 milliseconds
+12543 milliseconds
+11212 milliseconds
+
+tp(100) = doc1 and doc2
+8559 milliseconds
+9014 milliseconds
+8600 milliseconds
+8764 milliseconds
+8312 milliseconds
+
+tp(1000) = doc1 and doc2
+9416 milliseconds
+8843 milliseconds
+8904 milliseconds
+8886 milliseconds
+8802 milliseconds
+
+/*
+Higher ThreadPool numbers, higher CPU usage.
+It shows processing time decreases, 
+however, after a certain numbers of threadPool,
+there is no significant differences appeared
+*/
