@@ -1,40 +1,33 @@
 package ie.gmit.sw;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 
-public class MinHash implements Runnable {	
-	private int setIndex;
-	private int numHashes;
+public class MinHash implements Callable<Integer>{		
 	private int hash;
-	private int min;	
 	private List<String> shingleList;
-	// @param Integer: document id
-	// @param Set<Integer>: hashes 
-	private Map<Integer, List<Integer>> map;
-	private int numTerms;
-	private int mod;
-	private long start_time;
-	private long end_time;
-	private long duration;	
 
-
-	
-	public MinHash(int setIndex, List<String> shingleList, int numHashes) {				
-		this.setIndex = setIndex;
+	public MinHash(List<String> shingleList, int hash) {						
 		this.shingleList = shingleList;
-		this.numHashes = numHashes;
+		this.hash = hash;
 	}
 
-	
-	
-	/*public void run() {
+	public Integer call() {
+		Integer minHashValue = Integer.MAX_VALUE;
+		try {									
+			for (String word : shingleList){
+				int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
+				if (minHash < minHashValue) {
+					minHashValue = minHash;
+				}
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return minHashValue;
+	}
+
+	/*public void run() { // Runnable implementation
 		// loop over the number of permutations times
 		// Threadpool gives each job to the n-number of worker threads
 		// create 200 MinHash set 1 and 2
@@ -71,19 +64,5 @@ public class MinHash implements Runnable {
 		System.out.println("Hashes size: "+hashes.size()+"\nHashList size: "+hashList.size());
 		System.out.println("MinHashing Done: " + duration + " milliseconds");
 	}*/
-	
-	public void run() {
-		try {
-			for (String word : shingleList){
-				int minHash = word.hashCode() ^ hash; //Bitwise XOR the string hashCode with the hash
-				if (minHash < min) {
-					min = minHash;
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-	}
 
 }
